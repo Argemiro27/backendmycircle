@@ -1,10 +1,19 @@
-const mysql = require('mysql2');
+const { Sequelize } = require('sequelize');
 
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'root',
-  database: 'mycircle'
+const sequelize = new Sequelize('schedzagenda', 'root', 'root', {
+  dialect: 'mysql',
+  host: 'localhost'
 });
 
-module.exports = connection;
+async function connect() {
+  try {
+    await sequelize.authenticate();
+    console.log('Conexão estabelecida com sucesso!');
+  } catch (error) {
+    console.error('Não foi possível conectar ao banco de dados:', error);
+  }
+}
+
+connect();
+
+module.exports = sequelize;

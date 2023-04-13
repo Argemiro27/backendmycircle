@@ -1,17 +1,25 @@
 const express = require('express');
-const connection = require('./db');
-
 const app = express();
+const cors = require('cors');
 
-app.get('/users', (req, res) => {
-  connection.query('SELECT * FROM users', (err, results, fields) => {
-    if (err) {
-      console.log(err);
-      res.status(500).send('Erro interno no servidor');
-    } else {
-      res.status(200).json(results);
-    }
-  });
+const authRoutes = require('./routes/auth.js');
+const tarefaRoutes = require('./routes/tarefas.js');
+
+app.use(express.json());
+app.use(cors());
+
+app.use('/auth', authRoutes);
+app.use('/tarefa', tarefaRoutes);
+
+const User = require('./models/User');
+app.get('/users', async (req, res) => {
+  try {
+    const users = await User.findAll();
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Erro interno no servidor');
+  }
 });
 
 app.listen(8000, () => {
